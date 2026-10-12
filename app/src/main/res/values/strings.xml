@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name" translatable="false">Scrawl</string>
+    <string name="keyboard_label" translatable="false">Scrawl</string>
+    <string name="ime_subtype_handwriting">Handwriting</string>
+</resources>

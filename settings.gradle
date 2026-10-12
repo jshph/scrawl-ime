@@ -1,0 +1,33 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        def scrawlOnyxMaven = System.getenv('SCRAWL_ONYX_MAVEN')
+        if (scrawlOnyxMaven) {
+            maven {
+                url scrawlOnyxMaven
+                content {
+                    includeGroup 'com.onyx.android.sdk'
+                    includeGroup 'pub.devrel'
+                    includeGroup 'com.tencent'
+                    includeGroup 'com.jakewharton.hugo.fix'
+                }
+            }
+        }
+        google()
+        mavenCentral()
+        maven {
+            url "http://repo.boox.com/repository/maven-public/"
+            allowInsecureProtocol = true
+        }
+        maven { url "https://jitpack.io" }
+    }
+}
+rootProject.name = "Scrawl"
+include ':app'

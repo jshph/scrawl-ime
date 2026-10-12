@@ -1,0 +1,1 @@
+Fixed handwriting mode covering the screen with a white background on monochrome BOOX devices, including Note Max. The underlying app and text now remain visible while writing.

@@ -1,0 +1,97 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'com.github.triplet.play' version '4.0.0'
+}
+
+android {
+    compileSdk 36
+    namespace 'com.scrawl.app'
+
+    signingConfigs {
+        release {
+            storeFile file('../keystore/scrawl-release.jks')
+            storePassword System.getenv('KEYSTORE_PASSWORD')
+            keyAlias 'scrawl'
+            keyPassword System.getenv('KEY_PASSWORD')
+        }
+    }
+
+    defaultConfig {
+        applicationId "com.scrawl.app"
+        minSdk 29
+        targetSdk 36
+        versionCode 24
+        versionName '0.1.18'
+        ndk {
+            abiFilters 'arm64-v8a'
+        }
+    }
+
+    buildTypes {
+        debug {
+            minifyEnabled false
+        }
+        release {
+            signingConfig signingConfigs.release
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+    buildFeatures {
+        aidl true
+    }
+    packagingOptions {
+        jniLibs {
+            pickFirsts += ['**/*.so']
+            useLegacyPackaging true
+        }
+    }
+}
+
+play {
+    releaseStatus.set(com.github.triplet.gradle.androidpublisher.ReleaseStatus.DRAFT)
+}
+
+dependencies {
+    implementation 'androidx.core:core-ktx:1.17.0'
+    implementation 'androidx.documentfile:documentfile:1.0.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2'
+
+    // Ink API for stroke rendering
+    def ink_version = "1.0.0"
+    implementation "androidx.ink:ink-nativeloader:$ink_version"
+    implementation "androidx.ink:ink-brush:$ink_version"
+    implementation "androidx.ink:ink-geometry:$ink_version"
+    implementation "androidx.ink:ink-rendering:$ink_version"
+    implementation "androidx.ink:ink-strokes:$ink_version"
+
+    // Onyx SDK for e-ink refresh modes
+    implementation('com.onyx.android.sdk:onyxsdk-device:1.3.2') {
+        exclude group: 'com.android.support', module: 'support-compat'
+    }
+    implementation('com.onyx.android.sdk:onyxsdk-pen:1.5.1') {
+        exclude group: 'com.android.support', module: 'support-compat'
+        exclude group: 'com.android.support', module: 'appcompat-v7'
+        exclude group: "com.onyx.android.sdk", module: "onyxsdk-geometry"
+    }
+    implementation('com.onyx.android.sdk:onyxsdk-base:1.8.3') {
+        exclude group: 'com.android.support', module: 'support-compat'
+        exclude group: 'com.android.support', module: 'appcompat-v7'
+    }
+
+    // ML Kit Digital Ink Recognition — portable HWR fallback for devices
+    // without Onyx KHwrService (e.g. Nova Air 2 on old firmware).
+    // Model is only downloaded at runtime if OnyxHWR fails to bind.
+    implementation 'com.google.mlkit:digital-ink-recognition:19.0.0'
+
+    testImplementation 'junit:junit:4.13.2'
+}
